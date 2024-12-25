@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣诞快乐</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .start-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 200px;
+            background: linear-gradient(to bottom, #ff0000, #cc0000);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .start-button::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: #ffcc00;
+            position: absolute;
+            top: -25px;
+            border-radius: 5px;
+        }
+
+        .firecracker-text {
+            color: #ffcc00;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 24px;
+            margin-top: 20px;
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        .start-button:hover {
+            transform: translate(-50%, -52%);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text {
+            position: fixed;
+            font-size: 3em;
+            color: #fff;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            text-shadow: 0 0 5px #fff,
+                         0 0 10px #fff,
+                         0 0 20px #ff0000,
+                         0 0 30px #ff0000,
+                         0 0 40px #ff0000;
+        }
+
+        .christmas-tree {
+            position: fixed;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 500px;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .tree-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree-layer {
+            position: absolute;
+            width: 100%;
+            background: linear-gradient(135deg, 
+                #064406 0%, 
+                #0a5c0a 25%,
+                #0f8f0f 50%,
+                #0a5c0a 75%,
+                #064406 100%
+            );
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            filter: drop-shadow(0 0 15px rgba(0,100,0,0.4));
+            transition: transform 0.3s ease;
+        }
+
+        .layer-1 { 
+            height: 40%; 
+            top: 0;
+            width: 100%;
+        }
+
+        .layer-2 { 
+            height: 35%; 
+            top: 30%;
+            width: 80%;
+        }
+
+        .layer-3 { 
+            height: 30%; 
+            top: 55%;
+            width: 60%;
+        }
+
+        .star {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #ffd700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starTwinkle 2s infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            from { filter: brightness(1) drop-shadow(0 0 10px #ffd700); }
+            to { filter: brightness(1.5) drop-shadow(0 0 20px #ffd700); }
+        }
+
+        .ornament {
+            position: absolute;
+            border-radius: 50%;
+            animation: ornamentSwing 3s infinite ease-in-out;
+        }
+
+        @keyframes ornamentSwing {
+            0% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+            100% { transform: rotate(-5deg); }
+        }
+
+        .garland {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0000, #00ff00, #0000ff);
+            transform-origin: left;
+            animation: garlandTwinkle 2s infinite alternate;
+        }
+
+        @keyframes garlandTwinkle {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .exploding {
+            animation: explode 0.5s forwards;
+            transform-origin: center;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        .tree-decoration {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #ff0000);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        }
+
+        .greeting-text {
+            position: fixed;
+            width: 100%;
+            text-align: center;
+            top: 15%;
+            z-index: 10;
+            pointer-events: none;
+            font-family: "华文行楷", "楷体", "Microsoft YaHei", sans-serif;
+        }
+
+        .greeting-main {
+            font-size: 5em;
+            margin-bottom: 30px;
+            background: linear-gradient(to bottom, #fff4f4, #ffdddd);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px #ff0000,
+                         0 0 25px #ff0000,
+                         0 0 35px #ff6666;
+            font-weight: normal;
+            letter-spacing: 10px;
+        }
+
+        .greeting-sub {
+            font-size: 2.5em;
+            margin: 15px 0;
+            background: linear-gradient(to bottom, #fff4a8, #ffd700);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px #ffd700,
+                         0 0 25px #ffd700;
+            letter-spacing: 5px;
+        }
+
+        .greeting-wish {
+            font-size: 2em;
+            margin: 10px 0;
+            color: #fff;
+            text-shadow: 0 0 10px #ff69b4,
+                         0 0 20px #ff69b4;
+            letter-spacing: 3px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .starry-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star-background {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 3s) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .start-button {
+                width: 60px;
+                height: 120px;
+            }
+
+            .firecracker-text {
+                font-size: 16px;
+            }
+
+            .christmas-tree {
+                width: 200px;
+                height: 300px;
+            }
+
+            .greeting-main {
+                font-size: 2em;
+            }
+
+            .greeting-sub {
+                font-size: 1.2em;
+            }
+
+            .star {
+                width: 30px;
+                height: 30px;
+            }
+
+            .ornament {
+                transform-origin: top;
+            }
+        }
+
+        /* 优化动画性能 */
+        * {
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        /* 添加音乐控制按钮样式 */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            animation: none;
+        }
+
+        .music-icon {
+            font-size: 24px;
+            color: #fff;
+            animation: rotate 3s linear infinite;
+        }
+
+        .music-toggle.paused .music-icon {
+            animation-play-state: paused;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 添加文字动画效果 */
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+            50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000; }
+            100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+        }
+
+        .greeting-main {
+            animation: textGlow 2s infinite;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(90deg, #5c3a1d, #8b4513, #5c3a1d);
+            border-radius: 5px;
+        }
+
+        .snow-decoration {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: snowTwinkle 2s infinite alternate;
+        }
+
+        @keyframes snowTwinkle {
+            from { opacity: 0.3; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1.2); }
+        }
+
+        .candy {
+            position: absolute;
+            width: 15px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff0000 50%, #ffffff 50%);
+            border-radius: 5px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px rgba(255,0,0,0.5);
+        }
+
+        .bell {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700;
+            animation: bellRing 2s infinite;
+        }
+
+        @keyframes bellRing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .greeting-char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            color: #fff;
+            text-shadow: 0 0 15px #ff0000,
+                         0 0 25px #ff0000,
+                         0 0 35px #ff6666;
+            animation-fill-mode: forwards !important;
+        }
+
+        @keyframes charAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .music-toggle.pulse {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 10px currentColor; }
+            50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+            100% { text-shadow: 0 0 10px currentColor; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1901371647.mp3" type="audio/mpeg">
+        <source src="https://music.163.com/song/media/outer/url?id=1973626768.mp3" type="audio/mpeg">
+    </audio>
+    <button id="musicToggle" class="music-toggle">
+        <i class="music-icon">🎵</i>
+    </button>
+    <canvas id="fireworks"></canvas>
+    <button class="start-button">
+        <span class="firecracker-text">爆竹迎春</span>
+    </button>
+    <div class="text">圣诞快乐</div>
+    <div class="christmas-tree">
+        <div class="tree-layer layer-1"></div>
+        <div class="tree-layer layer-2"></div>
+        <div class="tree-layer layer-3"></div>
+        <div class="star"></div>
+        <div class="ornament"></div>
+        <div class="garland"></div>
+    </div>
+
+    <div class="greeting-text">
+        <div class="greeting-main" id="mainText">圣诞快乐</div>
+        <div class="greeting-sub" id="subText1">愿您心想事成</div>
+        <div class="greeting-sub" id="subText2">幸福安康</div>
+        <div class="greeting-sub" id="subText3">平安喜乐</div>
+        <div class="greeting-wish" id="wishText">愿圣诞的祝福、新年的祈愿</div>
+        <div class="greeting-wish" id="wishText2">伴您走过每个晨昏</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.querySelector('.start-button');
+        const text = document.querySelector('.text');
+        const tree = document.querySelector('.christmas-tree');
+
+        // 设置画布大小
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let lastFrameTime = 0;
+        const frameInterval = 1000 / 60; // 60fps
+
+        class Firework {
+            constructor(x, y, targetY, type = 'normal') {
+                this.x = x;
+                this.y = canvas.height;
+                this.targetY = targetY;
+                this.type = type;
+                this.speed = 15;
+                this.particles = [];
+                this.exploded = false;
+                this.color = this.getRandomColor();
+            }
+
+            getRandomColor() {
+                const colors = {
+                    normal: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'],
+                    rainbow: ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#9400d3'],
+                    gold: ['#ffd700', '#ffa500', '#ffff00'],
+                    silver: ['#ffffff', '#c0c0c0', '#a0a0a0']
+                };
+                const colorSet = colors[this.type] || colors.normal;
+                return colorSet[Math.floor(Math.random() * colorSet.length)];
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                switch(this.type) {
+                    case 'circle':
+                        this.createCircleExplosion();
+                        break;
+                    case 'heart':
+                        this.createHeartExplosion();
+                        break;
+                    case 'spiral':
+                        this.createSpiralExplosion();
+                        break;
+                    default:
+                        this.createNormalExplosion();
+                }
+            }
+
+            createCircleExplosion() {
+                const particleCount = 100;
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = (i / particleCount) * Math.PI * 2;
+                    const velocity = 8;
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * velocity,
+                        Math.sin(angle) * velocity,
+                        this.color
+                    ));
+                }
+            }
+
+            createHeartExplosion() {
+                const particleCount = 100;
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = (i / particleCount) * Math.PI * 2;
+                    const heartX = 16 * Math.pow(Math.sin(angle), 3);
+                    const heartY = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        heartX * 0.3,
+                        heartY * 0.3,
+                        this.color
+                    ));
+                }
+            }
+
+            createSpiralExplosion() {
+                const particleCount = 100;
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = (i / particleCount) * Math.PI * 20;
+                    const radius = i / particleCount * 8;
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * radius,
+                        Math.sin(angle) * radius,
+                        this.color
+                    ));
+                }
+            }
+
+            createNormalExplosion() {
+                const particleCount = 200;
+                const colors = [this.color, '#ffffff', '#ffff00', '#ffd700'];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = (Math.random() * Math.PI * 2);
+                    const velocity = Math.random() * 8 + 4;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * velocity,
+                        Math.sin(angle) * velocity,
+                        color,
+                        1 + Math.random() * 2
+                    ));
+                }
+
+                // 添加闪烁效果
+                for (let i = 0; i < 20; i++) {
+                    const angle = (Math.random() * Math.PI * 2);
+                    const velocity = Math.random() * 2 + 1;
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * velocity,
+                        Math.sin(angle) * velocity,
+                        '#ffffff',
+                        3,
+                        0.02
+                    ));
+                }
+            }
+        }
+
+        class Particle {
+            constructor(x, y, speedX, speedY, color, size = 2, decay = 0.015) {
+                this.x = x;
+                this.y = y;
+                this.speedX = speedX;
+                this.speedY = speedY;
+                this.color = color;
+                this.size = size;
+                this.alpha = 1;
+                this.decay = decay;
+                this.gravity = 0.1;
+            }
+
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // 添加光晕效果
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.size * 2
+                );
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.globalAlpha = this.alpha * 0.5;
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+
+        function createChristmasTree() {
+            const tree = document.querySelector('.christmas-tree');
+            tree.innerHTML = ''; // 清空现有内容
+
+            // 创建树的主体
+            const treeBody = document.createElement('div');
+            treeBody.className = 'tree-body';
+
+            // 添加树层
+            for (let i = 1; i <= 3; i++) {
+                const layer = document.createElement('div');
+                layer.className = `tree-layer layer-${i}`;
+                treeBody.appendChild(layer);
+            }
+
+            // 添加星星
+            const star = document.createElement('div');
+            star.className = 'star';
+            treeBody.appendChild(star);
+
+            // 添加装饰球
+            const colors = ['#ff0000', '#ffd700', '#00ff00', '#0000ff', '#ff00ff', '#ffffff'];
+            for (let i = 0; i < 20; i++) {
+                const ornament = document.createElement('div');
+                ornament.className = 'ornament';
+                const size = 8 + Math.random() * 12;
+                ornament.style.width = size + 'px';
+                ornament.style.height = size + 'px';
+                ornament.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+                
+                // 计算位置，确保装饰球分布在树的轮廓内
+                const angle = (Math.random() * Math.PI) - Math.PI/2;
+                const radius = Math.random() * 120 + 20;
+                const x = 150 + Math.cos(angle) * radius;
+                const y = 200 + Math.sin(angle) * radius;
+                
+                ornament.style.left = x + 'px';
+                ornament.style.top = y + 'px';
+                ornament.style.animationDelay = `${Math.random() * 2}s`;
+                treeBody.appendChild(ornament);
+            }
+
+            // 添加彩带
+            for (let i = 0; i < 4; i++) {
+                const garland = document.createElement('div');
+                garland.className = 'garland';
+                garland.style.width = `${60 - i * 10}%`;
+                garland.style.left = `${20 + i * 5}%`;
+                garland.style.top = `${30 + i * 20}%`;
+                garland.style.transform = `rotate(${Math.sin(i) * 5}deg)`;
+                treeBody.appendChild(garland);
+            }
+
+            // 添加雪花装饰
+            for (let i = 0; i < 10; i++) {
+                const snow = document.createElement('div');
+                snow.className = 'snow-decoration';
+                snow.innerHTML = '❄';
+                snow.style.left = `${10 + Math.random() * 80}%`;
+                snow.style.top = `${10 + Math.random() * 80}%`;
+                snow.style.animationDelay = `${Math.random() * 2}s`;
+                treeBody.appendChild(snow);
+            }
+
+            // 添加树干
+            const trunk = document.createElement('div');
+            trunk.className = 'tree-trunk';
+
+            // 所有元素添加到树中
+            tree.appendChild(treeBody);
+            tree.appendChild(trunk);
+        }
+
+        function createFirework(x, y, targetY, color) {
+            const particles = [];
+            const particleCount = 150; // 增加粒子数量
+            const angleStep = (Math.PI * 2) / particleCount;
+
+            for (let i = 0; i < particleCount; i++) {
+                const angle = angleStep * i;
+                const velocity = Math.random() * 5 + 3;
+                const particle = {
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * velocity,
+                    vy: Math.sin(angle) * velocity,
+                    alpha: 1,
+                    color: color
+                };
+                particles.push(particle);
+            }
+
+            return particles;
+        }
+
+        function lightUpTree() {
+            const lights = document.querySelectorAll('.tree-light');
+            lights.forEach((light, index) => {
+                setTimeout(() => {
+                    light.style.opacity = '1';
+                    light.style.boxShadow = '0 0 10px yellow';
+                }, index * 100);
+            });
+        }
+
+        let fireworks = [];
+        let animationStarted = false;
+
+        function createStarryBackground() {
+            const sky = document.createElement('div');
+            sky.className = 'starry-sky';
+            document.body.insertBefore(sky, document.body.firstChild);
+
+            const starCount = window.innerWidth < 768 ? 50 : 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-background';
+                
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机大小
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // 随机动画延迟和持续时间
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                
+                // 随机亮度
+                star.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                sky.appendChild(star);
+            }
+        }
+
+        // 优化移动端性能
+        function optimizeForMobile() {
+            if (window.innerWidth < 768) {
+                // 减少烟花粒子数量
+                Firework.prototype.createNormalExplosion = function() {
+                    const particleCount = 50; // 减少粒子数量
+                    for (let i = 0; i < particleCount; i++) {
+                        const angle = (Math.random() * Math.PI * 2);
+                        const velocity = Math.random() * 4 + 2;
+                        this.particles.push(new Particle(
+                            this.x,
+                            this.y,
+                            Math.cos(angle) * velocity,
+                            Math.sin(angle) * velocity,
+                            this.color
+                        ));
+                    }
+                };
+
+                // 调整动画帧率
+                let lastTime = 0;
+                const animate = function(currentTime) {
+                    if (currentTime - lastTime > 32) { // 约30fps
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        for (let i = fireworks.length - 1; i >= 0; i--) {
+                            // ... 原有的动画逻辑 ...
+                        }
+
+                        lastTime = currentTime;
+                    }
+                    requestAnimationFrame(animate);
+                };
+            }
+        }
+
+        function startAnimation() {
+            if (animationStarted) return;
+            animationStarted = true;
+            
+            explodeFirecracker();
+            createStarryBackground();
+
+            // 播放背景音乐
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = 0.5;  // 设置音量
+            bgMusic.src = 'https://music.163.com/song/media/outer/url?id=1907978706.mp3'; // 确保使用正确的音乐链接
+            try {
+                const playPromise = bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Music started playing');
+                        musicToggle.classList.remove('paused');
+                    }).catch(error => {
+                        console.log('Auto-play was prevented:', error);
+                        musicToggle.style.animation = 'pulse 1s infinite';
+                    });
+                }
+            } catch(e) {
+                console.log('Music play error:', e);
+            }
+
+            setTimeout(() => {
+                startButton.classList.add('hidden');
+                
+                // 持续发射烟花
+                function continuousFireworks() {
+                    if (fireworks.length < 5) {
+                        const types = ['circle', 'normal', 'spiral', 'heart'];
+                        const type = types[Math.floor(Math.random() * types.length)];
+                        const x = canvas.width * (0.1 + Math.random() * 0.8);
+                        const targetY = canvas.height * (0.2 + Math.random() * 0.3);
+                        
+                        fireworks.push(new Firework(x, canvas.height, targetY, type));
+                    }
+                    
+                    setTimeout(continuousFireworks, Math.random() * 1000 + 500);
+                }
+
+                continuousFireworks();
+                animate();
+            }, 500);
+
+            // 显示圣诞树
+            setTimeout(() => {
+                tree.style.opacity = '1';
+                tree.style.transition = 'opacity 2s';
+                lightUpTree();
+            }, 3000);
+
+            // 显示文字动画
+            setTimeout(() => {
+                startTextAnimation();
+            }, 4000);
+        }
+
+        function animate() {
+            if (!animationStarted) return;
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 更新烟花
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                const firework = fireworks[i];
+                firework.draw();
+                firework.update();
+
+                if (firework.exploded) {
+                    for (let j = firework.particles.length - 1; j >= 0; j--) {
+                        const particle = firework.particles[j];
+                        if (particle.alpha > 0) {
+                            particle.draw();
+                            particle.update();
+                        } else {
+                            firework.particles.splice(j, 1);
+                        }
+                    }
+
+                    if (firework.particles.length === 0) {
+                        fireworks.splice(i, 1);
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function explodeFirecracker() {
+            const button = document.querySelector('.start-button');
+            button.classList.add('exploding');
+            
+            // 添加爆炸粒子效果
+            for (let i = 0; i < 30; i++) {
+                createExplosionParticle(
+                    button.offsetLeft + button.offsetWidth / 2,
+                    button.offsetTop + button.offsetHeight / 2
+                );
+            }
+
+            // 播放爆竹声音
+            const audio = new Audio('data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAUAAAiSAAODg4ODh4eHh4eHi4uLi4uPj4+Pj4+T09PT09PT19fX19fb29vb29vf39/f39/j4+Pj4+fn5+fn5+vr6+vr7+/v7+/v8/Pz8/P39/f39/f7+/v7+////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAIkjG+JLZAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV');
+            audio.play();
+        }
+
+        function createExplosionParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            document.body.appendChild(particle);
+
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 5 + Math.random() * 10;
+            const size = 2 + Math.random() * 4;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.background = `hsl(${Math.random() * 60 + 10}, 100%, 50%)`;
+            particle.style.boxShadow = `0 0 ${size * 2}px ${size}px rgba(255, 200, 0, 0.3)`;
+
+            const animation = particle.animate([
+                {
+                    transform: 'translate(0, 0)',
+                    opacity: 1
+                },
+                {
+                    transform: `translate(${Math.cos(angle) * velocity * 50}px, ${Math.sin(angle) * velocity * 50}px)`,
+                    opacity: 0
+                }
+            ], {
+                duration: 1000,
+                easing: 'cubic-bezier(0, .9, .57, 1)'
+            });
+
+            animation.onfinish = () => particle.remove();
+        }
+
+        createChristmasTree();
+        startButton.addEventListener('click', startAnimation);
+
+        // 初始化时调用
+        window.addEventListener('load', () => {
+            createStarryBackground();
+            optimizeForMobile();
+            resizeCanvas();
+        });
+
+        // 添加设备方向变化监听
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                resizeCanvas();
+                createStarryBackground();
+            }, 300);
+        });
+
+        // 添加音乐���制逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            const musicToggle = document.getElementById('musicToggle');
+            const bgMusic = document.getElementById('bgMusic');
+            
+            bgMusic.addEventListener('error', (e) => {
+                console.log('Music load error:', e);
+                // 尝试使用备用链接
+                if (!bgMusic.src.includes('1907978706')) {
+                    bgMusic.src = 'https://music.163.com/song/media/outer/url?id=1907978706.mp3';
+                }
+            });
+
+            bgMusic.addEventListener('loadeddata', () => {
+                console.log('Music loaded successfully');
+            });
+
+            musicToggle.addEventListener('click', () => {
+                if (bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        musicToggle.classList.remove('paused');
+                        musicToggle.classList.remove('pulse');
+                    }).catch(error => {
+                        console.log('Play failed:', error);
+                    });
+                } else {
+                    bgMusic.pause();
+                    musicToggle.classList.add('paused');
+                }
+            });
+        });
+
+        function animateText(element, delay = 100) {
+            if (!element) return; // 添加检查
+            const text = element.textContent;
+            element.textContent = '';
+            
+            [...text].forEach((char, index) => {
+                const span = document.createElement('span');
+                span.className = 'greeting-char';
+                span.textContent = char;
+                span.style.animationName = 'charAppear';
+                span.style.animationDuration = '0.5s';
+                span.style.animationFillMode = 'forwards';
+                span.style.animationDelay = `${index * delay}ms`;
+                span.style.opacity = '0'; // 确保初始状态是可见的
+                element.appendChild(span);
+            });
+        }
+
+        // 修改文字动画逻辑
+        function startTextAnimation() {
+            const texts = {
+                mainText: { delay: 0, duration: 1000 },
+                subText1: { delay: 1000, duration: 800 },
+                subText2: { delay: 1800, duration: 800 },
+                subText3: { delay: 2600, duration: 800 },
+                wishText: { delay: 3400, duration: 1000 },
+                wishText2: { delay: 4200, duration: 1000 }
+            };
+
+            Object.entries(texts).forEach(([id, timing]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    setTimeout(() => {
+                        element.style.animation = `floatIn ${timing.duration}ms ease-out forwards, glowPulse 2s infinite ${timing.duration}ms`;
+                    }, timing.delay);
+                }
+            });
+        }
+
+        // 在 startAnimation 函数中修改文字显示的调用
+        setTimeout(() => {
+            startTextAnimation();
+        }, 4000);
+    </script>
+</body>
+</html> 
